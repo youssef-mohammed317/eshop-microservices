@@ -1,0 +1,8 @@
+services:
+  catalog-postgres-db: 
+    image: postgres:latest
+
+
+volumes:
+  catalog-postgres:  
+  
