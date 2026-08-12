@@ -1,5 +1,4 @@
 using Serilog;
-using Serilog.Events;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -12,15 +11,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.Host.UseSerilog((context, services, configuration) =>
     {
-        configuration
-            .MinimumLevel.Information()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .Enrich.WithMachineName()
-            .WriteTo.Console(
-                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {NewLine}{Exception}")
-            .WriteTo.Seq("http://localhost:5341");
+        configuration.ReadFrom.Configuration(context.Configuration);
     });
 
     builder.Services.AddCarter();
@@ -44,7 +35,7 @@ try
             .Replace("{POSTGRES_PORT}", postgres_port)
             .Replace("{POSTGRES_HOST}", postgres_host);
 
-        options.Connection("");
+        options.Connection(connectionString);
     });
 
 

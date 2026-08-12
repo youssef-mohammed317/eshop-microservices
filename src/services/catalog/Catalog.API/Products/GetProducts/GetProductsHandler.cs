@@ -10,7 +10,6 @@ public class GetProductsQueryHandler(IDocumentSession _session,
     {
         _logger.LogInformation("GetProductsQueryHandler.Handle called with {@query}", query);
 
-
         var products = await _session.Query<Product>().ToListAsync(cancellationToken);
 
         return new GetProductsResult(products);
