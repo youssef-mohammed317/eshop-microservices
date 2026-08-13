@@ -20,6 +20,7 @@ public class DeleteProductEndPoint : ICarterModule
         .Produces<DeleteProductResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Delete Product")
-        .WithDescription("Delete Product");
+        .WithDescription("Delete Product")
+        .WithTags("Products"); // Groups endpoints together in the Swagger UI
     }
 }

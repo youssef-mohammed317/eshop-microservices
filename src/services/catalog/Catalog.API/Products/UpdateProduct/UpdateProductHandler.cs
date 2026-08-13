@@ -4,33 +4,52 @@ public record UpdateProductCommand(Guid Id, string Name, List<string> Category, 
     : ICommand<UpdateProductResult>;
 public record UpdateProductResult(bool IsSuccess);
 
-public class UpdateProductCommandHandler(IDocumentSession _session,
-    ILogger<UpdateProductCommandHandler> _logger) : ICommandHandler<UpdateProductCommand, UpdateProductResult>
+
+public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
+{
+    public UpdateProductCommandValidator()
+    {
+        RuleFor(x => x.Id)
+            .NotEmpty().WithMessage("Product Id is required");
+
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Product Name is required");
+
+        RuleFor(x => x.Category)
+            .NotEmpty().WithMessage("Product Category is required");
+
+        RuleFor(x => x.Description)
+            .NotEmpty().WithMessage("Product Description is required");
+
+        RuleFor(x => x.ImageFile)
+            .NotEmpty().WithMessage("Product ImageFile is required");
+
+        RuleFor(x => x.Price)
+            .GreaterThan(0).WithMessage("Product Price must be greater than zero");
+    }
+}
+
+public class UpdateProductCommandHandler(IDocumentSession _session)
+    : ICommandHandler<UpdateProductCommand, UpdateProductResult>
 {
     public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
     {
-
-        _logger.LogInformation("UpdateProductCommandHandler.Handle called with {@command}", command);
-
-        // product
+        // Load product
         var product = await _session.LoadAsync<Product>(command.Id, cancellationToken);
 
         if (product is null)
         {
-            throw new ProductNotFoundException();
+            throw new ProductNotFoundException(command.Id);
         }
 
-        product.Name = command.Name;
-        product.Category = command.Category;
-        product.Description = command.Description;
-        product.ImageFile = command.ImageFile;
-        product.Price = command.Price;
+        // Mapster automatically updates the properties of the existing product instance
+        command.Adapt(product);
 
-        // save to database
+        // Save to database
         _session.Update(product);
         await _session.SaveChangesAsync(cancellationToken);
 
-        // return result
+        // Return result
         return new UpdateProductResult(true);
     }
 }

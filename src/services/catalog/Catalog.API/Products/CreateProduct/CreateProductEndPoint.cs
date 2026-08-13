@@ -20,6 +20,7 @@ public class CreateProductEndPoint : ICarterModule
         .Produces<CreateProductResponse>(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Create Product")
-        .WithDescription("Create Product");
+        .WithDescription("Create Product")
+        .WithTags("Products"); // Groups endpoints together in the Swagger UI
     }
 }

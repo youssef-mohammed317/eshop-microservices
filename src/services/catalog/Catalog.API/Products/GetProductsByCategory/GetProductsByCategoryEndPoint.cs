@@ -22,6 +22,7 @@ public class GetProductsByCategoryEndPoint : ICarterModule
             .Produces<GetProductsByCategoryResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .WithSummary("Get Products By Category")
-            .WithDescription("Get Products By Category");
+            .WithDescription("Get Products By Category")
+            .WithTags("Products"); // Groups endpoints together in the Swagger UI
     }
 }

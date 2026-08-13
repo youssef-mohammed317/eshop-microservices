@@ -20,6 +20,7 @@ public class UpdateProductEndPoint : ICarterModule
         .Produces<UpdateProductResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Update Product")
-        .WithDescription("Update Product");
+        .WithDescription("Update Product")
+        .WithTags("Products"); // Groups endpoints together in the Swagger UI
     }
 }

@@ -1,8 +1,20 @@
 services:
+  catalog.api:
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: ./services/catalog/Catalog.API/Dockerfile
+    networks:
+      - catalog-network # Attach API to the network
   catalog-postgres-db: 
     image: postgres:latest
+    networks:
+      - catalog-network 
 
 
 volumes:
   catalog-postgres:  
-  
+
+networks:
+  catalog-network:
+    driver: bridge
