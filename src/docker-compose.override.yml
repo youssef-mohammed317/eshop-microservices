@@ -4,19 +4,15 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - POSTGRES_HOST=catalog-postgres-db
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=catalog-postgres-db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - ConnectionStrings__catalog-postgres-db=Host=catalog-postgres-db;Port=5432;Database=catalog-postgres-db;Username=postgres;Password=postgres
     ports:
       - "6000:8080"
       - "6060:8081"
     depends_on:
       - catalog-postgres-db
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
   catalog-postgres-db:
     container_name: catalog-postgres-db
@@ -28,4 +24,4 @@ services:
     ports:
       - 5433:5432
     volumes:
-      - catalog-postgres:/var/lib/postgresql/data
+      - catalog-postgres:/var/lib/postgresql

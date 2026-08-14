@@ -21,20 +21,7 @@ try
     });
     builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
-
-    var postgres_user = Environment.GetEnvironmentVariable("POSTGRES_USER");
-    var postgres_password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
-    var postgres_db = Environment.GetEnvironmentVariable("POSTGRES_DB");
-    var postgres_port = Environment.GetEnvironmentVariable("POSTGRES_PORT");
-    var postgres_host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
-
-    var connectionStringTemplete = builder.Configuration.GetConnectionString("catalog-postgres-db");
-
-    var connectionString = connectionStringTemplete!.Replace("{POSTGRES_USER}", postgres_user)
-        .Replace("{POSTGRES_PASSWORD}", postgres_password)
-        .Replace("{POSTGRES_DB}", postgres_db)
-        .Replace("{POSTGRES_PORT}", postgres_port)
-        .Replace("{POSTGRES_HOST}", postgres_host);
+    var connectionString = builder.Configuration.GetConnectionString("catalog-postgres-db")!;
 
     builder.Services.AddMarten(options =>
     {

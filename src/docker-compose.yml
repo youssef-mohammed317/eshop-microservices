@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: ./services/catalog/Catalog.API/Dockerfile
     networks:
-      - catalog-network # Attach API to the network
+      - catalog-network 
   catalog-postgres-db: 
     image: postgres:latest
     networks:
