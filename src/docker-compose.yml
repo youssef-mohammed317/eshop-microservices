@@ -12,9 +12,29 @@ services:
       - catalog-network 
 
 
+  basket.api:
+    image: ${DOCKER_REGISTRY-}basketapi
+    build:
+      context: .
+      dockerfile: services/basket/Basket.API/Dockerfile
+    networks:
+      - basket-network 
+  basket-postgres-db: 
+    image: postgres:latest
+    networks:
+      - basket-network 
+  basket-redis-cache: 
+    image: redis:latest
+    networks:
+      - basket-network 
+
 volumes:
   catalog-postgres:  
+  basket-postgres:  
 
 networks:
   catalog-network:
     driver: bridge
+  basket-network:
+    driver: bridge
+

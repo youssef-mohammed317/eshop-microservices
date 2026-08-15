@@ -12,7 +12,9 @@ services:
       - catalog-postgres-db
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
   catalog-postgres-db:
     container_name: catalog-postgres-db
@@ -25,3 +27,36 @@ services:
       - 5433:5432
     volumes:
       - catalog-postgres:/var/lib/postgresql
+      
+  basket.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__basket-postgres-db=Host=basket-postgres-db;Port=5432;Database=basket-postgres-db;Username=postgres;Password=postgres
+      - ConnectionStrings__basket-redis-cache=basket-redis-cache:6379
+    ports:
+      - "6001:8080"
+      - "6061:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  
+  basket-postgres-db:
+    container_name: basket-postgres-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=basket-postgres-db
+    restart: always
+    ports:
+      - 5434:5432
+    volumes:
+      - basket-postgres:/var/lib/postgresql
+  basket-redis-cache:
+    container_name: basket-redis-cache
+    restart: always
+    ports:
+      - 6381:6379
