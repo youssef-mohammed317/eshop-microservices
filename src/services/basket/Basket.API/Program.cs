@@ -1,3 +1,5 @@
+using Discount.Grpc;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var assembly = typeof(Program).Assembly;
@@ -10,7 +12,7 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
-var connectionString = builder.Configuration.GetConnectionString("basket-postgres-db")!;
+var connectionString = builder.Configuration.GetConnectionString("Database")!;
 builder.Services.AddMarten(options =>
 {
     options.Connection(connectionString);
@@ -21,7 +23,7 @@ builder.Services.AddMarten(options =>
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
 
-var redisConnectionString = builder.Configuration.GetConnectionString("basket-redis-cache")!;
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis")!;
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redisConnectionString;
@@ -37,6 +39,20 @@ builder.Services.AddProblemDetails(); // Required for generating ProblemDetails 
 builder.Services.AddHealthChecks()
     .AddNpgSql(connectionString, name: "PostgreSQL Database")
     .AddRedis(redisConnectionString, name: "Redis Cache");
+
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+    return handler;
+});
+
 var app = builder.Build();
 
 app.UseExceptionHandler(options => { });

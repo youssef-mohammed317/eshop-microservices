@@ -10,6 +10,7 @@ services:
     image: postgres:latest
     networks:
       - catalog-network 
+      - eshop-network
 
 
   basket.api:
@@ -19,6 +20,7 @@ services:
       dockerfile: services/basket/Basket.API/Dockerfile
     networks:
       - basket-network 
+      - eshop-network
   basket-postgres-db: 
     image: postgres:latest
     networks:
@@ -28,11 +30,22 @@ services:
     networks:
       - basket-network 
 
+  discount.grpc:
+    image: ${DOCKER_REGISTRY-}discountgrpc
+    build:
+      context: .
+      dockerfile: services/discount/Discount.Grpc/Dockerfile
+    networks:
+      - eshop-networkfeat: add gRPC communication between Basket and Discount services
+
 volumes:
   catalog-postgres:  
   basket-postgres:  
+  # discount-sqlite:  
 
 networks:
+  eshop-network:
+    driver: bridge
   catalog-network:
     driver: bridge
   basket-network:
