@@ -12,6 +12,12 @@
   <Folder Name="/services/discount/">
     <Project Path="services/discount/Discount.Grpc/Discount.Grpc.csproj" Id="2e80c0b2-d648-42ee-9c7a-d3186e4b0b0e" />
   </Folder>
+  <Folder Name="/services/ordering/">
+    <Project Path="services/ordering/Ordering.API/Ordering.API.csproj" Id="942da5aa-77c2-4a15-bf56-57b1644ba4ec" />
+    <Project Path="services/ordering/Ordering.Application/Ordering.Application.csproj" Id="d349990a-59ed-4575-a04f-0ee8df8f4037" />
+    <Project Path="services/ordering/Ordering.Domain/Ordering.Domain.csproj" Id="f6d62102-04c1-43d7-9410-393153f80d0f" />
+    <Project Path="services/ordering/Ordering.Infrastructure/Ordering.Infrastructure.csproj" Id="3d363767-16ef-4634-887a-2518ddec138e" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
