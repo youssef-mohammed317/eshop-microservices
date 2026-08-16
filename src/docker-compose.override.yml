@@ -1,4 +1,49 @@
 services:
+  # -------------------------
+  # DATABASES & CACHES
+  # -------------------------
+  catalog-postgres-db:
+    container_name: catalog-postgres-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=catalog-postgres-db
+    restart: always
+    ports:
+      - 5433:5432
+    volumes:
+      - catalog-postgres:/var/lib/postgresql
+
+  basket-postgres-db:
+    container_name: basket-postgres-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=basket-postgres-db
+    restart: always
+    ports:
+      - 5434:5432
+    volumes:
+      - basket-postgres:/var/lib/postgresql
+
+  basket-redis-cache:
+    container_name: basket-redis-cache
+    restart: always
+    ports:
+      - 6381:6379
+  
+  ordering-sql-server-db:
+    container_name: ordering-sql-server-db
+    environment:
+      - SA_PASSWORD=Your_password123
+      - ACCEPT_EULA=Y
+    restart: always
+    ports:
+      - 1433:1433
+
+  # -------------------------
+  # APIs
+  # -------------------------
   catalog.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -16,18 +61,6 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  catalog-postgres-db:
-    container_name: catalog-postgres-db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=catalog-postgres-db
-    restart: always
-    ports:
-      - 5433:5432
-    volumes:
-      - catalog-postgres:/var/lib/postgresql
-      
   basket.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -44,23 +77,6 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-  
-  basket-postgres-db:
-    container_name: basket-postgres-db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=basket-postgres-db
-    restart: always
-    ports:
-      - 5434:5432
-    volumes:
-      - basket-postgres:/var/lib/postgresql
-  basket-redis-cache:
-    container_name: basket-redis-cache
-    restart: always
-    ports:
-      - 6381:6379
 
   discount.grpc:
     environment:

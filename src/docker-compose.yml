@@ -1,4 +1,31 @@
 services:
+  # -------------------------
+  # DATABASES & CACHES
+  # -------------------------
+  catalog-postgres-db: 
+    image: postgres:latest
+    networks:
+      - catalog-network 
+      - eshop-network
+
+  basket-postgres-db: 
+    image: postgres:latest
+    networks:
+      - basket-network 
+
+  basket-redis-cache: 
+    image: redis:latest
+    networks:
+      - basket-network 
+
+  ordering-sql-server-db: 
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    networks:
+      - ordering-network
+
+  # -------------------------
+  # APIs
+  # -------------------------
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
     build:
@@ -6,12 +33,6 @@ services:
       dockerfile: ./services/catalog/Catalog.API/Dockerfile
     networks:
       - catalog-network 
-  catalog-postgres-db: 
-    image: postgres:latest
-    networks:
-      - catalog-network 
-      - eshop-network
-
 
   basket.api:
     image: ${DOCKER_REGISTRY-}basketapi
@@ -21,14 +42,6 @@ services:
     networks:
       - basket-network 
       - eshop-network
-  basket-postgres-db: 
-    image: postgres:latest
-    networks:
-      - basket-network 
-  basket-redis-cache: 
-    image: redis:latest
-    networks:
-      - basket-network 
 
   discount.grpc:
     image: ${DOCKER_REGISTRY-}discountgrpc
@@ -36,8 +49,11 @@ services:
       context: .
       dockerfile: services/discount/Discount.Grpc/Dockerfile
     networks:
-      - eshop-networkfeat: add gRPC communication between Basket and Discount services
+      - eshop-network
 
+# -------------------------
+# VOLUMES & NETWORKS
+# -------------------------
 volumes:
   catalog-postgres:  
   basket-postgres:  
@@ -50,4 +66,5 @@ networks:
     driver: bridge
   basket-network:
     driver: bridge
-
+  ordering-network:
+    driver: bridge
