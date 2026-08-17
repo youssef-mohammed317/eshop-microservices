@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +28,11 @@ public class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger) : IE
                 exception.Message,
                 exception.GetType().Name,
                 StatusCodes.Status404NotFound
+            ),
+            BadRequestException => (
+                exception.Message,
+                exception.GetType().Name,
+                StatusCodes.Status400BadRequest
             ),
             _ => (
                 exception.Message,
@@ -62,6 +66,6 @@ public class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger) : IE
         context.Response.StatusCode = details.StatusCode;
         await context.Response.WriteAsJsonAsync(problemDetails, cancellationToken: cancellationToken);
 
-        return true; // Returns true to indicate the exception was successfully handled
+        return true;
     }
 }
