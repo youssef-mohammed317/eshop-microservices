@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Ordering.Application.Data;
 using Ordering.Infrastructure.Data;
 using Ordering.Infrastructure.Data.Interceptors;
 
@@ -23,6 +24,8 @@ public static class DependencyInjection
             // This will grab BOTH interceptors and apply them to EF Core
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
         });
+
+        services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
         return services;
     }

@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Ordering.Application.Data;
 
 namespace Ordering.Infrastructure.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     // Constructor accepting DbContextOptions to configure the database provider and connection string
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
