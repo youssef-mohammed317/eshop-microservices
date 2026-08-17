@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Ordering.Infrastructure.Data;
 using Ordering.Infrastructure.Data.SeedData;
-using System.Threading.Tasks;
 
 namespace Ordering.Infrastructure.DatabaseExtenstions;
 

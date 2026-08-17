@@ -6,7 +6,6 @@ services:
     image: postgres:latest
     networks:
       - catalog-network 
-      - eshop-network
 
   basket-postgres-db: 
     image: postgres:latest
@@ -31,14 +30,21 @@ services:
     build:
       context: .
       dockerfile: ./services/catalog/Catalog.API/Dockerfile
+    depends_on:
+      - catalog-postgres-db
     networks:
       - catalog-network 
+      - eshop-network
 
   basket.api:
     image: ${DOCKER_REGISTRY-}basketapi
     build:
       context: .
       dockerfile: services/basket/Basket.API/Dockerfile
+    depends_on:
+      - basket-postgres-db
+      - basket-redis-cache
+      - discount.grpc
     networks:
       - basket-network 
       - eshop-network
@@ -49,15 +55,26 @@ services:
       context: .
       dockerfile: services/discount/Discount.Grpc/Dockerfile
     networks:
+      - eshop-network      
+  ordering.api:
+    image: ${DOCKER_REGISTRY-}orderingapi
+    build:
+      context: .
+      dockerfile: services/ordering/Ordering.API/Dockerfile
+    depends_on:
+      - ordering-sql-server-db
+    networks:
+      - ordering-network 
       - eshop-network
-
 # -------------------------
 # VOLUMES & NETWORKS
 # -------------------------
+
 volumes:
   catalog-postgres:  
   basket-postgres:  
   # discount-sqlite:  
+  ordering-sql-server-db:
 
 networks:
   eshop-network:

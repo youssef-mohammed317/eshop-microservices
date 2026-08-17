@@ -12,8 +12,10 @@ public class GetOrdersByNameHandler(IApplicationDbContext dbContext)
         var orders = await dbContext.Orders
             .Include(o => o.OrderItems) // MUST include related entities for DTO mapping
             .AsNoTracking()
-            .Where(o => o.OrderName.Value.Contains(query.Name))
-            .OrderBy(o => o.OrderName.Value)
+            // Use exact match with the Value Object to avoid translation errors
+            .Where(o => o.OrderName == OrderName.Of(query.Name))
+            // Remove .Value from OrderBy, let EF Core handle the translated property directly
+            .OrderBy(o => o.OrderName)
             .ToListAsync(cancellationToken);
 
         // Convert Domain Entities to DTOs using our extension method
