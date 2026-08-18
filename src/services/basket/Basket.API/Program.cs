@@ -1,10 +1,15 @@
 using Discount.Grpc;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var assembly = typeof(Program).Assembly;
 
+// ==========================================
+// 1. Application Layer Services
+// ==========================================
 builder.Services.AddCarter();
+
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(assembly);
@@ -12,49 +17,65 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
+// ==========================================
+// 2. Data Access & Caching Layer (Infrastructure)
+// ==========================================
 var connectionString = builder.Configuration.GetConnectionString("Database")!;
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis")!;
+
+// Marten (PostgreSQL) Configuration
 builder.Services.AddMarten(options =>
 {
     options.Connection(connectionString);
     options.Schema.For<ShoppingCart>().Identity(p => p.UserName);
 }).UseLightweightSessions();
 
-
-builder.Services.AddScoped<IBasketRepository, BasketRepository>();
-builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
-
-var redisConnectionString = builder.Configuration.GetConnectionString("Redis")!;
+// Redis Configuration
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redisConnectionString;
     //options.InstanceName = "Basket";
 });
 
-// 1. Add this where you configure your builder.Services
-builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-builder.Services.AddProblemDetails(); // Required for generating ProblemDetails responses
+// Repositories Registration & Decorators
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
 
-
-
-builder.Services.AddHealthChecks()
-    .AddNpgSql(connectionString, name: "PostgreSQL Database")
-    .AddRedis(redisConnectionString, name: "Redis Cache");
-
+// ==========================================
+// 3. External Services (gRPC Clients)
+// ==========================================
 builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
 })
 .ConfigurePrimaryHttpMessageHandler(() =>
 {
-    var handler = new HttpClientHandler
+    return new HttpClientHandler
     {
         ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
     };
-    return handler;
 });
 
+builder.Services.AddMessageBroker(builder.Configuration);
+
+// ==========================================
+// 4. Cross-Cutting Concerns
+// ==========================================
+// Exception Handling
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddProblemDetails(); // Required for generating ProblemDetails responses
+
+// Health Checks
+builder.Services.AddHealthChecks()
+    .AddNpgSql(connectionString, name: "PostgreSQL Database")
+    .AddRedis(redisConnectionString, name: "Redis Cache");
+
+// ==========================================
+// 5. Build and HTTP Request Pipeline
+// ==========================================
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 app.UseExceptionHandler(options => { });
 
 app.MapCarter();
@@ -63,6 +84,5 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
-
 
 await app.RunAsync();

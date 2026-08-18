@@ -13,3 +13,7 @@ global using Serilog;
 global using Basket.API.Models;
 global using Basket.API.Exceptions;
 global using Basket.API.Data;
+global using BuildingBlocks.Messaging.MassTransit;
+global using BuildingBlocks.Messaging.Events;
+global using MassTransit;
+global using Basket.API.Dtos;

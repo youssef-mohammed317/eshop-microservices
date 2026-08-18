@@ -20,6 +20,7 @@ public static class DependencyInjection
                             connectionString: connectionString,
                             name: "SqlServer",
                             tags: new[] { "db", "sql", "sqlserver" });
+
         return services;
     }
     public static IApplicationBuilder UseApiServices(this WebApplication app)

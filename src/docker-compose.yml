@@ -22,6 +22,11 @@ services:
     networks:
       - ordering-network
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    networks:
+      - eshop-network
+
   # -------------------------
   # APIs
   # -------------------------

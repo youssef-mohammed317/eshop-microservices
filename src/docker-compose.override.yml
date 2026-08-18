@@ -43,6 +43,17 @@ services:
     volumes:
       - ordering-sql-server-db:/var/opt/mssql
 
+  rabbitmq:
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
+    ports:
+      - "5672:5672"   # AMQP protocol port
+      - "15672:15672" # Management UI port 
+
+
   # -------------------------
   # APIs
   # -------------------------
@@ -71,6 +82,15 @@ services:
       - ConnectionStrings__Database=Host=basket-postgres-db;Port=5432;Database=basket-postgres-db;Username=postgres;Password=postgres
       - ConnectionStrings__Redis=basket-redis-cache:6379
       - GrpcSettings__DiscountUrl=https://discount.grpc:8081
+      - MessageBroker__Host=rabbitmq
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+    depends_on:
+      - basket-postgres-db
+      - basket-redis-cache
+      - discount.grpc
+      - rabbitmq
+
     ports:
       - "6001:8080"
       - "6061:8081"
@@ -102,6 +122,13 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=ordering-sql-server-db;Database=ordering-sql-server-db;User Id=sa;Password=Your_password123;TrustServerCertificate=True;
+      - MessageBroker__Host=rabbitmq
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+      - FeatureManagement__UseAzureServiceBus=true
+    depends_on:
+      - ordering-sql-server-db
+      - rabbitmq
     ports:
       - "6003:8080"
       - "6063:8081"

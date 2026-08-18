@@ -9,3 +9,7 @@ global using Ordering.Domain.ValueObjects;
 global using Ordering.Application.Data;
 global using Ordering.Application.Exceptions;
 global using Ordering.Domain.Events;
+global using BuildingBlocks.Messaging.Events;
+global using MassTransit;
+global using Microsoft.Extensions.Logging;
+global using Ordering.Application.Orders.Commands.CreateOrder;
