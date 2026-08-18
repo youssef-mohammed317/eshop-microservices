@@ -82,7 +82,7 @@ services:
       - ConnectionStrings__Database=Host=basket-postgres-db;Port=5432;Database=basket-postgres-db;Username=postgres;Password=postgres
       - ConnectionStrings__Redis=basket-redis-cache:6379
       - GrpcSettings__DiscountUrl=https://discount.grpc:8081
-      - MessageBroker__Host=rabbitmq
+      - MessageBroker__Host=amqp://rabbitmq:5672
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
     depends_on:
@@ -122,7 +122,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=ordering-sql-server-db;Database=ordering-sql-server-db;User Id=sa;Password=Your_password123;TrustServerCertificate=True;
-      - MessageBroker__Host=rabbitmq
+      - MessageBroker__Host=amqp://rabbitmq:5672
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
       - FeatureManagement__UseAzureServiceBus=true
