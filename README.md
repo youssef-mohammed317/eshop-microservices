@@ -122,6 +122,16 @@ src/
 └── docker-compose.yml
 ```
 
+## Course & Certificate
+
+This project was built while following [.NET Microservices: Architecture, Development, Deployment](https://www.udemy.com/course/microservices-architecture-and-implementation-on-dotnet) on Udemy.
+
+- 🎓 Certificate: [View here](https://drive.google.com/file/d/1ncTyHQOOVLb-jpRR3FuWNttXllPE7C8j/view?usp=drive_link)
+
+## Repository
+
+🔗 [github.com/youssef-mohammed317/eshop-microservices](https://github.com/youssef-mohammed317/eshop-microservices)
+
 ## License
 
 See [LICENSE](LICENSE).
