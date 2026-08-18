@@ -75,6 +75,14 @@ services:
 # VOLUMES & NETWORKS
 # -------------------------
 
+  yarpapigateway:
+    image: ${DOCKER_REGISTRY-}yarpapigateway
+    build:
+      context: .
+      dockerfile: ApiGateways/YarpApiGateway/Dockerfile
+    networks:
+      - eshop-network
+
 volumes:
   catalog-postgres:  
   basket-postgres:  
@@ -90,3 +98,4 @@ networks:
     driver: bridge
   ordering-network:
     driver: bridge
+
