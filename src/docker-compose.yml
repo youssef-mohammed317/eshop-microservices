@@ -82,6 +82,16 @@ services:
       dockerfile: ApiGateways/YarpApiGateway/Dockerfile
     networks:
       - eshop-network
+      - external-network
+
+  shopping.web:
+    image: ${DOCKER_REGISTRY-}shoppingweb
+    build:
+      context: .
+      dockerfile: web-apps/Shopping.Web/Dockerfile
+    networks:
+      - external-network
+
 
 volumes:
   catalog-postgres:  
@@ -98,4 +108,7 @@ networks:
     driver: bridge
   ordering-network:
     driver: bridge
+  external-network:
+    driver: bridge
+
 
